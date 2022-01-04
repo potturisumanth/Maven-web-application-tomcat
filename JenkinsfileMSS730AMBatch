@@ -1,0 +1,41 @@
+node
+{
+
+def mavenHome = tool name: "maven3.6.2"
+properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), pipelineTriggers([pollSCM('* * * * *')])])
+
+ stage('CheckoutCode')
+ {
+  git branch: 'master', credentialsId: '0eb44278-575c-4a51-bd77-a797d525e698', url: 'https://github.com/potturisumanth/Maven-web-application-tomcat.git'
+ }
+ 
+ stage('Build')
+ {
+ 
+ sh "${mavenHome}/bin/mvn clean package"
+ }
+ /*
+ stage('ExecuteSonarQubeReport')
+ {
+ sh "${mavenHome}/bin/mvn sonar:sonar"
+ }
+ 
+stage('UploadArtifactIntoNexus')
+ {
+ sh "${mavenHome}/bin/mvn deploy"
+ }
+ 
+ 
+ 
+ stage('SendEmailNotiifcation')
+ {
+ mail bcc: '', body: '''Build Over..
+
+ Regards,
+ Sumanth,
+ +37125605971.''', cc: 'potturi2106@gmail.com', from: '', replyTo: '', subject: 'Build Over', to: 'potturi2106@gmail.com'
+ }
+
+ */
+ 
+}

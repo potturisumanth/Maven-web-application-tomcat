@@ -1,0 +1,45 @@
+node('master')
+{
+//echo "GitHub BranhName ${env.BRANCH_NAME}"
+  //echo "Jenkins Job Number ${env.BUILD_NUMBER}"
+  echo "Jenkins Node Name ${env.NODE_NAME}"
+  
+  echo "Jenkins Home ${env.JENKINS_HOME}"
+  echo "Jenkins URL ${env.JENKINS_URL}"
+  echo "JOB Name ${env.JOB_NAME}"
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '3'))])
+def mavenhome = tool name: "maven3.6.3"
+stage('get code')
+{
+git branch: 'master', credentialsId: '1b1e6399-a0af-4447-92d3-1bb0e771af94', url: 'https://github.com/potturisumanth/Maven-web-application-tomcat.git'
+}
+stage('bulid')
+{
+sh "${mavenhome}/bin/mvn clean package"
+}
+stage('sonarqube report')
+{
+sh "${mavenhome}/bin/mvn sonar:sonar"
+}
+/*
+stage('jacoco')
+{
+jacoco changeBuildStatus: true, deltaBranchCoverage: '50', deltaClassCoverage: '60', deltaComplexityCoverage: '10', deltaInstructionCoverage: '30', deltaLineCoverage: '20', deltaMethodCoverage: '20', maximumBranchCoverage: '80', maximumClassCoverage: '80', maximumComplexityCoverage: '80', maximumInstructionCoverage: '80', maximumLineCoverage: '80', maximumMethodCoverage: '80', minimumBranchCoverage: '50', minimumClassCoverage: '60', minimumComplexityCoverage: '10', minimumInstructionCoverage: '30', minimumLineCoverage: '20', minimumMethodCoverage: '20'
+}
+*/
+stage('uploaded to artifactory')
+{
+sh "${mavenhome}/bin/mvn clean deploy"
+}
+stage('deploy to tomcat'){
+sshagent(['5484b8ba-393e-44e9-9263-cbe8417cbbe9']) {
+   sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.204.142:/usr/local/tomcat9/webapps"
+}
+}
+stage('email notification'){
+emailext body: '''build report 
+
+regards 
+sumanth''', subject: 'bulid report', to: 'potturi2106@gmail.com'
+}
+}
