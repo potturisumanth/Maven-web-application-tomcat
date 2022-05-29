@@ -38,8 +38,8 @@ stage('DeployAppintoTomcatServer')
    mail bcc: 'devopstrainingblr@gmail.com', body: '''Build Over..
 
    Regards,
-   Mithun Technologies,
-   9980923226''', cc: 'devopstrainingblr@gmail.com', from: '', replyTo: '', subject: 'Build Over..', to: 'devopstrainingblr@gmail.com'
+   Sumanth,
+   7893866455''', cc: 'potturi2106@gmail.com', from: '', replyTo: '', subject: 'Build Over..', to: 'potturisumanth2106@gmail.com'
   }
   */
 }
